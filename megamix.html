@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sınav Notları Tek Sayfa - İş Sağlığı, Kimya, Hukuk</title>
+    
+    <style>
+        /* GENEL STİLLER (Sekme Yapısı İçin) */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .tab-menu {
+            display: flex;
+            border-bottom: 2px solid #ccc;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background-color: #eee;
+            color: #333;
+            font-size: 16px;
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        .tab-button.active {
+            background-color: #007bff;
+            color: white;
+            border-bottom: 3px solid #007bff;
+        }
+        .tab-content {
+            display: none; /* Başlangıçta tüm içerikler gizlenir */
+            padding: 20px 0;
+        }
+        .tab-content.active {
+            display: block; /* Aktif içerik gösterilir */
+        }
+
+        /* ------------------------------------------- */
+        /* 1. İŞ SAĞLIĞI STİLLERİ (issaglıgı1.html'den) */
+        /* ------------------------------------------- */
+        /* .tab-content içinde bulundukları için body'e ait margin/padding kaldırıldı. */
+        .isg-content body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f8f8;
+            padding: 0;
+            margin: 0;
+        }
+        .isg-content h1 {
+            color: #004d40;
+            border-bottom: 3px solid #004d40;
+            padding-bottom: 10px;
+        }
+        .isg-content h2 {
+            color: #00796b;
+            margin-top: 30px;
+            border-left: 5px solid #00796b;
+            padding-left: 10px;
+            background-color: #e0f2f1;
+            padding: 10px;
+        }
+        .isg-content h3 {
+            color: #4db6ac;
+            margin-top: 20px;
+            font-style: italic;
+        }
+        .isg-content h4 {
+            color: #c62828;
+            margin-top: 25px;
+            border-bottom: 1px dashed #c62828;
+            padding-bottom: 5px;
+        }
+        .isg-content ul {
+            list-style-type: square;
+            margin-left: 20px;
+        }
+        .isg-content ul ul {
+            list-style-type: circle;
+            margin-left: 30px;
+        }
+        .isg-content strong {
+            color: #004d40;
+        }
+        .isg-content em {
+            color: #c62828;
+            font-weight: bold;
+        }
+        .isg-content .kazik-soru-box {
+            border: 2px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            background-color: #fff3e0;
+            border-radius: 5px;
+        }
+        .isg-content .kazik-soru-box p {
+            margin: 5px 0;
+        }
+        .isg-content .cevap-ipucu {
+            color: #d84315;
+            font-size: 0.9em;
+            margin-top: 10px;
+            border-top: 1px dotted #ffcc80;
+            padding-top: 5px;
+        }
+
+        /* ------------------------------------- */
+        /* 2. KİMYA STİLLERİ (kimya.html'den) */
+        /* ------------------------------------- */
+        .kimya-content body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            padding: 0;
+            margin: 0;
+        }
+        .kimya-content h1 {
+            color: #004a99;
+            border-bottom: 2px solid #004a99;
+            padding-bottom: 10px;
+        }
+        .kimya-content h2 {
+            color: #0066cc;
+            background-color: #e6f0ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .kimya-content h3 {
+            color: #0055b3;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+        .kimya-content h4 {
+            color: #333;
+            margin-top: 15px;
+        }
+        .kimya-content ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        .kimya-content ul ul {
+            list-style-type: circle;
+            margin-left: 30px;
+        }
+        .kimya-content strong {
+            color: #cc0000;
+        }
+        .kimya-content .formula {
+            font-family: Consolas, monospace;
+            background-color: #ffe0b2;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #8d6e63;
+        }
+        .kimya-content .tanim-kutusu {
+            border: 1px solid #ffb74d;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #fff8e1;
+            border-left: 5px solid #ff9800;
+        }
+
+        /* ------------------------------------- */
+        /* 3. HUKUK STİLLERİ (hukuk1.html'den) */
+        /* ------------------------------------- */
+        .hukuk-content body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f7f6;
+            padding: 0;
+            margin: 0;
+        }
+        .hukuk-content .container-hukuk {
+             /* Bu div'i koruyoruz ama padding/margin'i tab-content'e bırakıyoruz */
+            max-width: 900px;
+            margin: 0; 
+            padding: 0; 
+            background-color: transparent;
+            border-radius: 10px;
+            box-shadow: none;
+        }
+        .hukuk-content h1 {
+            text-align: center;
+            color: #1a535c;
+            border-bottom: 3px solid #4ecdc4;
+            padding-bottom: 10px;
+        }
+        .hukuk-content h2 {
+            color: #1a535c;
+            border-bottom: 2px solid #f7fff7;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            background-color: #e0fbfc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .hukuk-content h3 {
+            color: #4ecdc4;
+            margin-top: 20px;
+            border-left: 4px solid #4ecdc4;
+            padding-left: 10px;
+        }
+        .hukuk-content h4 {
+            color: #ff6b6b;
+            margin-top: 15px;
+        }
+        .hukuk-content ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        .hukuk-content ul ul {
+            list-style-type: square;
+            margin-left: 30px;
+        }
+        .hukuk-content b {
+            color: #1a535c;
+        }
+        .hukuk-content .not-kutu {
+            background-color: #ffe66d;
+            border: 1px solid #ffc300;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="tab-menu">
+            <button class="tab-button active" onclick="openTab(event, 'isg')">İş Sağlığı ve Güvenliği</button>
+            <button class="tab-button" onclick="openTab(event, 'kimya')">Genel Kimya</button>
+            <button class="tab-button" onclick="openTab(event, 'hukuk')">Hukukun Temel Kavramları</button>
+        </div>
+
+        <div id="isg" class="tab-content isg-content active">
+            <h1>İş Sağlığı ve Güvenliği - İlk 7 Ünite Detaylı Çalışma Notları ve Kazık Sorular</h1>
+
+            <h2>Ünite 1: Temel Tanımlar ve Kavramlar</h2>
+            <ul>
+                <li><strong>İş Sağlığı ve Güvenliği (İSG):</strong> İşin yapılması sırasında, işyerindeki fiziki çevre şartları ve çalışanların sağlığı ile ilgili risklerin belirlenerek ortadan kaldırılmasına yönelik çalışmaların tamamıdır.</li>
+                <li><strong>Risk:</strong> Tehlikeden kaynaklanacak kayıp, yaralanma ya da diğer zararlı sonuçların meydana gelme olasılığıdır. ($\text{Risk} = \text{Olasılık} \times \text{Şiddet}$)</li>
+                <li><strong>Tehlike:</strong> İşyerinde var olan veya dışarıdan gelebilecek, çalışana veya işyerine zarar verme potansiyeli olan her şey. (Örn: Yüksekte çalışma, kimyasal madde, elektrik enerjisi, gürültü)</li>
+                <li><strong>Ramak Kala Olay:</strong> İşyerinde meydana gelen, çalışana, işyerine veya ekipmanlara zarar verme potansiyeli olduğu hâlde **zarar vermeyen** olay. (Örn: Makineden fırlayan parçanın çalışana isabet etmemesi)</li>
+            </ul>
+
+            <h2>Ünite 2: İSG Mevzuatının Temel Prensipleri</h2>
+            <ul>
+                <li><strong>Temel Mevzuat:</strong> 6331 Sayılı İş Sağlığı ve Güvenliği Kanunu.</li>
+                <li><strong>Uygulama Alanı:</strong> Genel olarak **memurlar**, **işçiler** ve **esnaflar** dahil (istisnalar hariç) tüm işyerlerini kapsar.
+                    <ul>
+                        <li><em>Kapsam Dışındakiler (Genellikle Soru Gelir):</em> Türk Silahlı Kuvvetleri, Emniyet Genel Müdürlüğü, Afet ve Acil Durum birimleri (Mücadele aşamasında), ev hizmetleri.</li>
+                    </ul>
+                </li>
+                <li><strong>İşverenin Temel Yükümlülükleri (Ezber):</strong>
+                    <ul>
+                        <li>Risk değerlendirmesi yapmak/yaptırmak.</li>
+                        <li>İSG hizmetlerini sağlamak (İşyeri hekimi, İSG uzmanı, hemşire).</li>
+                        <li>Çalışanları bilgilendirmek ve eğitim vermek.</li>
+                        <li>Koruyucu ve önleyici tedbirleri almak.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Ünite 3: Risk Değerlendirmesi</h2>
+            <ul>
+                <li><strong>Yükümlülük:</strong> İşverenin **yükümlülüğüdür**. Yapılmazsa idari para cezası uygulanır.</li>
+                <li><strong>Ekip:</strong> Risk değerlendirmesi **ekip çalışması** ile yapılır. Ekipte işveren/vekil, İSG uzmanı, işyeri hekimi, çalışan temsilcisi ve destek elemanları bulunur.</li>
+                <li><strong>Sıklığı:</strong>
+                    <ul>
+                        <li>Çok Tehlikeli: En geç 2 yılda bir.</li>
+                        <li>Tehlikeli: En geç 4 yılda bir.</li>
+                        <li>Az Tehlikeli: En geç 6 yılda bir.</li>
+                    </ul>
+                </li>
+                <li><strong>Yenilenmesi Gereken Durumlar:</strong> İş kazası/meslek hastalığı sonrası, işyerinde önemli bir değişiklik olduğunda, yeni bir tehlike ortaya çıktığında.</li>
+            </ul>
+
+            <h2>Ünite 4: Çalışanların Yükümlülük ve Hakları</h2>
+            <ul>
+                <li><strong>Çalışanın Yükümlülükleri:</strong>
+                    <ul>
+                        <li>İşverenin İSG talimatlarına uymak.</li>
+                        <li>Kişisel koruyucu donanımı (KKD) doğru kullanmak.</li>
+                        <li>Tehlikeyi amirine/çalışan temsilcisine bildirmek.</li>
+                    </ul>
+                </li>
+                <li><strong>Çalışanın Hakları (Sorular Buradan Çıkar):</strong>
+                    <ul>
+                        <li><strong>Çalışmaktan Kaçınma Hakkı:</strong> Ciddi ve yakın tehlike durumunda, işveren gerekli önlemi alana kadar işi bırakabilir. (İşten çıkarılamaz, ücreti ödenmeye devam eder.)</li>
+                        <li><strong>İSG Kurulu:</strong> 50 ve üzeri çalışan varsa ve 6 aydan fazla süren işlerse kurul kurma zorunluluğu vardır.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Ünite 5: Meslek Hastalıkları ve İş Kazaları</h2>
+            <ul>
+                <li><strong>İş Kazası (5510 Sayılı Kanun, Madde 13):</strong>
+                    <ul>
+                        <li>Sigortalının işyerinde bulunduğu sırada.</li>
+                        <li>İşveren tarafından yürütülmekte olan iş nedeniyle.</li>
+                        <li>İşveren emri ile başka bir yerde görevli iken.</li>
+                        <li>Emzirme izninde.</li>
+                        <li>İşverenin sağladığı servis ile gidiş/geliş sırasında.</li>
+                    </ul>
+                </li>
+                <li><strong>Meslek Hastalığı:</strong> Sigortalının çalıştığı işin niteliğine göre tekrarlanan maruziyet sonucu ortaya çıkan hastalık.</li>
+                <li><strong>Bildirim Yükümlülükleri:</strong>
+                    <ul>
+                        <li><strong>İş Kazası:</strong> İşveren tarafından SGK'ya **olayın olduğu tarihten itibaren 3 iş günü** içinde bildirim yapılır.</li>
+                        <li><strong>Meslek Hastalığı:</strong> İşyeri hekimi veya sağlık hizmet sunucusu tanı koyduktan sonra **10 gün** içinde SGK'ya bildirilir.</li>
+                        <li><strong>Adli Vaka (Kolluk Kuvveti):</strong> Kaza ölümle veya vücut bütünlüğünün bozulmasıyla sonuçlanmışsa <strong>derhal (hemen)</strong> bildirim yapmak.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h4>Ünite 7: Sınavda Çıkabilecek Zor Sorular (Kazık Sorular)</h4>
+            <div class="kazik-soru-box">
+                <p><strong>1. Soru (Kapsam/Yasal Tanım):</strong> İşverenin sağladığı servisle işe gelirken kaza yapan çalışan ile iş çıkışı kendi arabasıyla evine dönerken kaza yapan çalışan, 5510 sayılı Kanun'a göre "iş kazası" açısından nasıl değerlendirilir?</p>
+                <p class="cevap-ipucu">*(Cevap İpucu: Servisle kaza yapan çalışanın durumu, yasanın 13/e maddesi uyarınca <strong>iş kazasıdır</strong>. Kendi arabasıyla dönen çalışanın durumu ise, yasal tanıma uymadığı için <strong>iş kazası sayılmaz</strong>.)*</p>
+            </div>
+            <div class="kazik-soru-box">
+                <p><strong>2. Soru (Yükümlülük/Ayrım):</strong> Bir makineden fırlayan parça çalışana isabet etmemiş ve yaralanma olmamıştır (Ramak Kala). İşverenin bu olaya ilişkin SGK/Kolluk bildirim yükümlülüğü ve iç süreç yükümlülüğü nedir?</p>
+                <p class="cevap-ipucu">*(Cevap İpucu: SGK'ya veya Kolluk Kuvvetlerine <strong>bildirim yükümlülüğü yoktur</strong>. Ancak Ramak Kala olayı işyerinde **kayıt altına alınmalı** ve risk değerlendirmesi <strong>gözden geçirilmelidir</strong>.)*</p>
+            </div>
+        </div>
+
+        <div id="kimya" class="tab-content kimya-content">
+            <h1>Genel Kimya Sınav Notları (Ünite 1-7) - Düzeltilmiş Versiyon</h1>
+
+            <h2>Ünite 1: Madde ve Ölçümler</h2>
+            <ul>
+                <li><strong>Madde:</strong> Kütlesi ve hacmi olan her şey.</li>
+                <li><strong>Yoğunluk (d):</strong> Bir maddenin birim hacimdeki kütlesidir. ($\text{d} = \text{m} / \text{V}$). Yoğunluk, maddeler için **ayırt edici bir özelliktir**.</li>
+                <li><strong>SI Birimleri (Temel):</strong>
+                    <ul>
+                        <li>Kütle: Kilogram ($\text{kg}$)</li>
+                        <li>Uzunluk: Metre ($\text{m}$)</li>
+                        <li>Sıcaklık: Kelvin ($\text{K}$)</li>
+                        <li>Madde Miktarı: Mol ($\text{mol}$)</li>
+                    </ul>
+                </li>
+                <li><strong>Sıcaklık Dönüşümleri:</strong>
+                    <ul>
+                        <li>Kelvin ($\text{K}$) = Santigrat ($\text{°C}$) + 273.15</li>
+                        <li>Fahrenhayt ($\text{°F}$) = 1.8 $\times$ Santigrat ($\text{°C}$) + 32</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Ünite 2: Atomun Yapısı</h2>
+            <ul>
+                <li><strong>Temel Parçacıklar:</strong>
+                    <ul>
+                        <li>Proton ($\text{p}^{+}$): Çekirdekte bulunur. Pozitif yüklü. Kütlesi $\approx 1 \text{ akb}$.</li>
+                        <li>Nötron ($\text{n}^{0}$): Çekirdekte bulunur. Yüksüz. Kütlesi $\approx 1 \text{ akb}$.</li>
+                        <li>Elektron ($\text{e}^{-}$): Çekirdek çevresindeki orbitallerde bulunur. Negatif yüklü. Kütlesi ihmal edilebilir ($\approx 0 \text{ akb}$).</li>
+                    </ul>
+                </li>
+                <li><strong>Temel Tanımlar:</strong>
+                    <ul>
+                        <li><strong>Atom Numarası (Z):</strong> Çekirdekteki **proton** sayısı. Bir elementin kimliğini belirler.</li>
+                        <li><strong>Kütle Numarası (A):</strong> Proton + Nötron sayısı. ($\text{A} = \text{Z} + \text{n}^{0}$)</li>
+                        <li><strong>İzotop:</strong> Atom numarası aynı ($\text{Z}$), kütle numarası (nötron sayısı) farklı olan atomlar (Örn: $\text{}^{12}\text{C}$ ve $\text{}^{14}\text{C}$).</li>
+                        <li><strong>İyon:</strong> Atom veya atom gruplarının elektron alıp vermesiyle oluşan yüklü tanecikler. ($\text{Katyon}$: Pozitif yüklü, $\text{Anyon}$: Negatif yüklü)</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Ünite 4: Kimyasal Bağlar</h2>
+            <ul>
+                <li><strong>Kimyasal Bağın Oluşumu:</strong> Atomlar, en dış katmanlarını **soygaz düzenine** (genellikle 8 elektron/oktet) benzetmek için elektron alışverişi veya ortaklaşması yaparlar.</li>
+                <li><strong>Bağ Türleri:</strong>
+                    <ul>
+                        <li><strong>İyonik Bağ:</strong> Metal ($\text{e}^{-}$ veren) ve Ametal ($\text{e}^{-}$ alan) atomlar arasında, elektron alışverişi sonucu oluşan elektrostatik çekim kuvveti. (Örn: $\text{NaCl}$). Genellikle <strong>yüksek erime noktası</strong>.</li>
+                        <li><strong>Kovalent Bağ:</strong> Ametal atomlar arasında, elektronların **ortaklaşa** kullanılmasıyla oluşur.
+                            <ul>
+                                <li>**Polar Kovalent:** Farklı ametaller (elektronegatiflik farkı var). ($\text{HCl}$)</li>
+                                <li>**Apolar Kovalent:** Aynı ametaller (elektronegatiflik farkı yok). ($\text{O}_{2}$)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Elektronegatiflik:</strong> Atomun kimyasal bağdaki elektronları **çekme yeteneği**. Periyodik tabloda sağa ve yukarı doğru artar. (En elektronegatif element: Flor ($\text{F}$)).</li>
+            </ul>
+
+            <h2>Ünite 7: Moleküler Yapı ve Bağlanma Kuramları</h2>
+            <h3>7.1. Lewis Yapıları</h3>
+            <div class="tanim-kutusu">
+                Atomların değerlik (en dış katman) elektronlarının sembol etrafında noktalarla gösterilmesi. Kovalent bağdaki ortaklanmış elektron çiftleri çizgilerle, ortaklanmamış elektron çiftleri noktalarla gösterilir.
+            </div>
+
+            <h3>7.2. Formal Yük</h3>
+            <ul>
+                <li>Bir atomun molekül içindeki kabul edilen yüküdür. Formülü:
+                    $$\text{Formal Yük} = (\text{Değerlik } \text{e}^{-}) - (\text{Ortaklanmamış } \text{e}^{-}) - \frac{1}{2}(\text{Ortaklanmış } \text{e}^{-})$$
+                </li>
+                <li>Bir molekülde en kararlı Lewis yapısı, atomların formal yüklerinin **sıfıra en yakın** olduğu yapıdır.</li>
+            </ul>
+
+            <h3>7.5. Moleküler Geometri (VSEPR Modeli)</h3>
+            <ul>
+                <li><strong>VSEPR Kuramı:</strong> Merkez atom etrafındaki elektron çiftlerinin birbirini en az iteceği şekilde uzayda düzenlenmesi prensibine dayanır.</li>
+                <li><strong>Temel Geometriler (Elektron Grubu):</strong>
+                    <ul>
+                        <li>2 Çift: Doğrusal ($\text{180°}$)</li>
+                        <li>3 Çift: Üçgen Düzlem ($\text{120°}$)</li>
+                        <li>4 Çift: Düzgün Dörtyüzlü ($\text{109.5°}$)</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>7.6. Hibritleşme</h3>
+            <ul>
+                <li><strong>Hibritleşme:</strong> Farklı atom orbitallerinin ($\text{s, p, d}$) karışarak eşdeğer "hibrit orbitaller" meydana getirmesidir.</li>
+                <li><strong>Hibritleşme Türleri ve Geometrileri:</strong>
+                    <ul>
+                        <li><strong>sp:</strong> 2 hibrit orbitali $\to$ Doğrusal ($\text{180°}$) (Örn: $\text{BeF}_{2}$)</li>
+                        <li><strong>sp²:</strong> 3 hibrit orbitali $\to$ Üçgen Düzlem ($\text{120°}$) (Örn: $\text{BF}_{3}$)</li>
+                        <li><strong>sp³:</strong> 4 hibrit orbitali $\to$ Düzgün Dörtyüzlü ($\text{109.5°}$) (Örn: $\text{CH}_{4}$)</li>
+                    </ul>
+                </li>
+                <li><strong>Hibritleşme Sayısı:</strong> Merkez atom etrafındaki **sigma ($\sigma$) bağı** sayısı + **ortaklanmamış elektron çifti** sayısı.</li>
+            </ul>
+        </div>
+
+        <div id="hukuk" class="tab-content hukuk-content">
+            <div class="container-hukuk">
+                <h1>Hukukun Temel Kavramları - Sınav Notları (Ünite 1-7)</h1>
+
+                <h2>Ünite 1: Sosyal Hayatı Düzenleyen Kurallar ve Hukuk</h2>
+                <ul>
+                    <li><strong>Hukuk Kuralları:</strong> Yaptırımı **Maddi** (Devlet gücüyle zorla uygulanabilen) olan tek kural türüdür.</li>
+                    <li><strong>Hukuk Yaptırımları (Ezber):</strong>
+                        <ul>
+                            <li><strong>Cezalar:</strong> Suç işlendiğinde uygulanır (Hapis, Adli Para Cezası).</li>
+                            <li><strong>Cebri İcra:</strong> Borcun devlet zoruyla yerine getirilmesi.</li>
+                            <li><strong>Tazminat:</strong> Hukuka aykırı eylem sonucu uğranılan zararın giderilmesi (Maddi veya Manevi).</li>
+                            <li><strong>Hükümsüzlük:</strong> Hukuka aykırı yapılan bir işlemin geçersiz sayılması.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Hükümsüzlük Türleri:</strong>
+                        <ul>
+                            <li><strong>Yokluk:</strong> Kurucu unsurları eksik olan işlemler (Örn: Resmi evlendirme memuru önünde yapılmayan evlilik).</li>
+                            <li><strong>Mutlak Butlan:</strong> Emredici hukuk kurallarına aykırı olan işlemler (Örn: Kanuna aykırı sözleşme, ehliyetsiz kişinin işlemi).</li>
+                            <li><strong>Nispi Butlan:</strong> İrade sakatlığı (Hata, Hile, Korkutma) olan işlemler. (İptal edilene kadar geçerlidir).</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h2>Ünite 2: Hukuk Türleri ve Kaynakları</h2>
+                <ul>
+                    <li><strong>Pozitif Hukuk:</strong> Belirli bir zamanda, belirli bir ülkede (yürürlükte olan veya olmayan) **yazılı ve yazısız** tüm hukuk kurallarının toplamı.</li>
+                    <li><strong>Mevzuat:</strong> Belirli bir zamanda, belirli bir ülkede yürürlükte olan **sadece yazılı** hukuk kurallarının toplamı.</li>
+                    <li><strong>Hukukun Kaynakları (Ezber Sırası):</strong>
+                        <ol>
+                            <li><strong>Bağlayıcı Kaynaklar (Yazılı):</strong> Anayasa, Kanun, Cumhurbaşkanlığı Kararnameleri, Yönetmelikler.</li>
+                            <li><strong>Bağlayıcı Kaynaklar (Yazısız):</strong> Örf ve Âdet Hukuku (Kanunda atıf yapılmışsa).</li>
+                            <li><strong>Yardımcı Kaynaklar (Bağlayıcı Değil):</strong> İçtihat (Yargı Kararları) ve Bilimsel Görüşler (Doktrin).</li>
+                        </ol>
+                    </li>
+                    <li><strong>Hukuk Boşluğu:</strong> Kanunda ve Örf-Adet Hukukunda uygulanacak kuralın olmaması durumu. Hâkim, **hukuk yaratır** (Kanun koyucu gibi hareket eder).</li>
+                </ul>
+
+                <h2>Ünite 3: Hukuk Dalları</h2>
+                <ul>
+                    <li><strong>Özel Hukuk:</strong> Eşitler arasındaki ilişkileri düzenler (Devlet, birey gibi davranır).
+                        <ul>
+                            <li>Medeni Hukuk, Borçlar Hukuku, Ticaret Hukuku.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Kamu Hukuku:</strong> Devletin üstün gücünü kullanarak yaptığı işlemler ile ilgili ilişkileri düzenler.
+                        <ul>
+                            <li>Anayasa Hukuku, İdare Hukuku, Ceza Hukuku, Vergi Hukuku.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Medeni Hukuk'un Dört Kitabı (Sırasıyla):</strong>
+                        <ol>
+                            <li>Kişiler Hukuku</li>
+                            <li>Aile Hukuku</li>
+                            <li>Miras Hukuku</li>
+                            <li>Eşya Hukuku</li>
+                        </ol>
+                    </li>
+                </ul>
+
+                <h2>Ünite 4: Hukuki Olay, Fiil ve İşlem Ayrımı</h2>
+                <div class="not-kutu">
+                    En kritik ayrım: Olay irade dışı, Fiil ve İşlem iradeye dayalıdır.
+                </div>
+                <ul>
+                    <li><strong>Temel Kavramlar:</strong>
+                        <ul>
+                            <li><b>Hukuki Olay:</b> İnsan iradesi dışındaki olaylar (doğum, ölüm, deprem gibi. Mirasın açılması).</li>
+                            <li><b>Hukuki Fiil:</b> Hukukun sonuç bağladığı <i>insan iradesine dayalı</i> davranışlar (hukuka uygun veya aykırı).</li>
+                            <li><b>Hukuki İşlem:</b> Hukuki bir <i>sonuç elde etmeye yönelik irade açıklamasıdır</i> (Tek taraflı (vasiyet) veya çok taraflı (sözleşme)).</li>
+                            <li><i>Soru:</i> "Ölüm" nedir? (Hukuki Olay). "Hırsızlık" nedir? (Hukuki Fiil - Hukuka Aykırı). "Vasiyetname" nedir? (Hukuki İşlem - Tek Taraflı).</li>
+                        </ul>
+                    </li>
+                    <li><b>Borcun Kaynakları (Ezber):</b>
+                        <ul>
+                            <li>"Aşağıdakilerden hangisi borcun kaynaklarından biri değildir?"</li>
+                            <li><i>Ezberlenecek Liste:</i> 1. Hukuki İşlemler (Genellikle Sözleşme), 2. Haksız Fiil, 3. Sebepsiz Zenginleşme.</li>
+                        </ul>
+                    </li>
+                    <li><b>Ayrım Sorusu: İrade Sakatlığı vs. Muvazaa</b>
+                        <ul>
+                            <li><b>İrade Sakatlığı (Hata, Hile, İkrah):</b> Kişinin <i>kendi iradesi</i> sakatlanmıştır. İşlem, 1 yıl içinde iptal edilebilir (Nispî Butlan).</li>
+                            <li><b>Muvazaa (Danışıklı İşlem):</b> <i>Her iki taraf da</i> anlaşarak üçüncü kişileri aldatmıştır. İşlem **kesinlikle geçersizdir** (Mutlak Butlan).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+
+            // Tüm içerikleri gizle
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+
+            // Tüm butonlardaki 'active' sınıfını kaldır
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+
+            // Seçilen içeriği göster ve butonu aktif yap
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Sayfa yüklendiğinde varsayılan sekmeyi (İş Sağlığı) otomatik aç
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelector(".tab-button").click();
+        });
+    </script>
+</body>
+</html>
